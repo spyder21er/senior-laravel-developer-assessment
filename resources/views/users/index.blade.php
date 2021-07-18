@@ -29,7 +29,11 @@
                             <td>
                                 <a class="btn btn-sm btn-primary" href="{{ route('users.show', $user->id) }}">View</a>
                                 <a class="btn btn-sm btn-success" href="{{ route('users.edit', $user->id) }}">Edit</a>
-                                <a class="btn btn-sm btn-danger text-light" href="#">Delete</a>
+                                <a class="btn btn-sm btn-danger text-light" 
+                                    onclick="event.preventDefault();
+                                            document.getElementById('delete-form').action = '{{ route('users.destroy', $user->id) }}';" 
+                                    data-toggle="modal" 
+                                    data-target="#confirmDeleteModal">Delete</a>
                             </td>
                         </tr>
                     @endforeach
@@ -37,4 +41,5 @@
             </table>
         </div>
     </div>
+    @include('components.delete-modal')
 @endsection
