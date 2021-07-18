@@ -159,4 +159,18 @@ class UserController extends Controller
 
         return back()->with(['success' => 'User restored successfully!']);
     }
+
+    /**
+     * Permanently delete the specified resource.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function delete($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->forceDelete();
+
+        return back()->with(['success' => 'User permanently deleted!']);
+    }
 }

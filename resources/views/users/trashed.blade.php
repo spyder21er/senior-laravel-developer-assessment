@@ -32,7 +32,11 @@
                                             restoreForm.action = '{{ route('users.restore', $user->id) }}';
                                             restoreForm.submit();" 
                                     class="btn btn-sm btn-success">Restore</button>
-                                <button class="btn btn-sm btn-danger text-light">Delete</button>
+                                <button class="btn btn-sm btn-danger text-light" 
+                                    onclick="event.preventDefault();
+                                            document.getElementById('delete-form').action = '{{ route('users.delete', $user->id) }}';" 
+                                    data-toggle="modal" 
+                                    data-target="#confirmDeleteModal">Delete</button>
                             </td>
                         </tr>
                     @endforeach
@@ -40,6 +44,7 @@
             </table>
         </div>
     </div>
+    @include('components.delete-modal')
     <form id="restore-form" action="#" method="POST">
         @csrf
         @method('PATCH')
