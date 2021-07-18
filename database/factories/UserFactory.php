@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 
@@ -28,6 +29,7 @@ class UserFactory extends Factory
         $prefix = [null, 'Mr', 'Ms', 'Mrs'];
         $suffix = [null, 'Jr', 'Sr'];
         $selected_prefix = $selected_gender + ($selected_gender == 2 ? mt_rand(0, 1) : 0);
+        $photo = UploadedFile::fake()->image('photo1.png', 100, 100);
 
         return [
             'prefixname' => $prefix[$selected_prefix],
@@ -38,7 +40,7 @@ class UserFactory extends Factory
             'username' => $this->faker->unique()->userName(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => bcrypt('password'),
-            'photo' => null,
+            'photo' => $photo->storeAs('images', Str::random() . "." . $photo->extension(), 'public'),
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
