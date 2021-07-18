@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -51,7 +52,7 @@ class UserController extends Controller
             'type' => 'nullable|string',
         ];
         $validated_user = $request->validate($rules);
-        if ($request->file('photo')->isValid()) {
+        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
             $validated_user['photo'] = $request->photo->storeAs('images', Str::random() . "." . $request->photo->extension(), 'public');
         }
         $validated_user['password'] = bcrypt($validated_user['password']);
@@ -81,7 +82,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return view('users.edit', compact('user'));
     }
 
     /**
@@ -93,7 +94,26 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $rules = [
+            'prefixname' => 'nullable|in:Mr,Mrs,Ms',
+            'firstname' => 'required|string',
+            'middlename' => 'nullable|string',
+            'lastname' => 'required|string',
+            'suffixname' => 'nullable|string',
+            'username' => ['required', 'string', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+            'photo' => 'nullable|image',
+            'type' => 'nullable|string',
+        ];
+        $new_attributes = $request->validate($rules);
+        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
+            $new_attributes['photo'] = $request->photo->storeAs('images', Str::random() . "." . $request->photo->extension(), 'public');
+        }
+        if ($new_attributes['type'] === null)
+            unset($new_attributes['type']);
+        $user->update($new_attributes);
+
+        return back()->with('success', 'User updated successfully');
     }
 
     /**

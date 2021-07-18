@@ -7,15 +7,7 @@
 @section('content')
     <h1 class="h3 mb-4 text-gray-800">Create User</h1>
     @include('components.flash')
-    @if ($errors->any())
-        <div class="alert alert-danger" role="alert">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    @include('components.error-messages')
     <div class="row">
         <div class="col-md">
             <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
