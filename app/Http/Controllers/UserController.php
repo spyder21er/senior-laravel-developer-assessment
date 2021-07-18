@@ -35,7 +35,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = $this->user_service->list();
         
         return view('users.index', compact('users'));
     }
@@ -58,26 +58,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
-            'prefixname' => 'nullable|in:Mr,Mrs,Ms',
-            'firstname' => 'required|string',
-            'middlename' => 'nullable|string',
-            'lastname' => 'required|string',
-            'suffixname' => 'nullable|string',
-            'username' => 'required|string|unique:App\Models\User',
-            'email' => 'required|email|unique:App\Models\User',
-            'password' => 'required|confirmed|min:8',
-            'photo' => 'nullable|image',
-            'type' => 'nullable|string',
-        ];
-        $validated_user = $request->validate($rules);
-        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
-            $validated_user['photo'] = $request->photo->storeAs('images', Str::random() . "." . $request->photo->extension(), 'public');
-        }
-        $validated_user['password'] = bcrypt($validated_user['password']);
-        if ($validated_user['type'] === null) 
-            unset($validated_user['type']);
-        User::create($validated_user);
+        $this->user_service->store($request->all());
 
         return back()->with('success', 'User created successfully');
     }
@@ -113,24 +94,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $rules = [
-            'prefixname' => 'nullable|in:Mr,Mrs,Ms',
-            'firstname' => 'required|string',
-            'middlename' => 'nullable|string',
-            'lastname' => 'required|string',
-            'suffixname' => 'nullable|string',
-            'username' => ['required', 'string', Rule::unique('users')->ignore($user->id)],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'photo' => 'nullable|image',
-            'type' => 'nullable|string',
-        ];
-        $new_attributes = $request->validate($rules);
-        if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
-            $new_attributes['photo'] = $request->photo->storeAs('images', Str::random() . "." . $request->photo->extension(), 'public');
-        }
-        if ($new_attributes['type'] === null)
-            unset($new_attributes['type']);
-        $user->update($new_attributes);
+        $this->user_service->update($user->id, $request->all());
 
         return back()->with('success', 'User updated successfully');
     }
@@ -143,7 +107,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
+        $this->user_service->destroy($user->id);
 
         return back()->with('success', "User deleted!");
     }
@@ -155,7 +119,7 @@ class UserController extends Controller
      */
     public function trashed()
     {
-        $users = User::onlyTrashed()->get();
+        $users = $this->user_service->listTrashed();
 
         return view('users.trashed', compact('users'));
     }
@@ -168,8 +132,7 @@ class UserController extends Controller
      */
     public function restore($id)
     {
-        $user = User::onlyTrashed()->findOrFail($id);
-        $user->restore();
+        $this->user_service->restore($id);
 
         return back()->with(['success' => 'User restored successfully!']);
     }
@@ -182,8 +145,7 @@ class UserController extends Controller
      */
     public function delete($id)
     {
-        $user = User::onlyTrashed()->findOrFail($id);
-        $user->forceDelete();
+        $this->user_service->delete($id);
 
         return back()->with(['success' => 'User permanently deleted!']);
     }
