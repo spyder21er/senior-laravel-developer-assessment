@@ -9,6 +9,11 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -127,5 +132,17 @@ class UserController extends Controller
         $user->delete();
 
         return back()->with('success', "User deleted!");
+    }
+
+    /**
+     * Display a listing of trashed resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function trashed()
+    {
+        $users = User::onlyTrashed()->get();
+
+        return view('users.trashed', compact('users'));
     }
 }

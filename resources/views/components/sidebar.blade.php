@@ -27,6 +27,7 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="{{ route('users.index') }}">Show all</a>
             <a class="collapse-item" href="{{ route('users.create') }}">Create new user</a>
+            <a class="collapse-item" href="{{ route('users.trashed') }}">Trashed</a>
           </div>
         </div>
       </li>
