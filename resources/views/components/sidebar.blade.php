@@ -25,7 +25,8 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{{ route('users.index') }}">Show All</a>
+            <a class="collapse-item" href="{{ route('users.index') }}">Show all</a>
+            <a class="collapse-item" href="{{ route('users.create') }}">Create new user</a>
           </div>
         </div>
       </li>
