@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -44,32 +43,27 @@ class UserService implements UserServiceInterface
      * @param  int $id
      * @return array
      */
-    public function rules($forcreate, $id = null)
+    public function rules($id = null)
     {
-        if ($forcreate)
-            return [
-                'prefixname' => 'nullable|in:Mr,Mrs,Ms',
-                'firstname' => 'required|string',
-                'middlename' => 'nullable|string',
-                'lastname' => 'required|string',
-                'suffixname' => 'nullable|string',
-                'username' => 'required|string|unique:App\Models\User',
-                'email' => 'required|email|unique:App\Models\User',
-                'password' => 'required|confirmed|min:8',
-                'photo' => 'nullable|image',
-                'type' => 'nullable|string',
-            ];
-        return [
-            'prefixname' => 'nullable|in:Mr,Mrs,Ms',
-            'firstname' => 'required|string',
-            'middlename' => 'nullable|string',
-            'lastname' => 'required|string',
-            'suffixname' => 'nullable|string',
-            'username' => ['required', 'string', Rule::unique('users')->ignore($id)],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($id)],
-            'photo' => 'nullable|image',
-            'type' => 'nullable|string',
+        $rules = [
+            'prefixname'    => 'nullable|in:Mr,Mrs,Ms',
+            'firstname'     => 'required|string',
+            'middlename'    => 'nullable|string',
+            'lastname'      => 'required|string',
+            'suffixname'    => 'nullable|string',
+            'username'      => 'required|string|unique:App\Models\User',
+            'email'         => 'required|email|unique:App\Models\User',
+            'password'      => 'required|confirmed|min:8',
+            'photo'         => 'nullable|image',
+            'type'          => 'nullable|string',
         ];
+        if ($id) {
+            $rules['username']  = ['required', 'string', Rule::unique('users')->ignore($id)];
+            $rules['email']     = ['required', 'email', Rule::unique('users')->ignore($id)];
+            unset($rules['password']);
+        }
+
+        return $rules;
     }
 
     /**
@@ -90,17 +84,15 @@ class UserService implements UserServiceInterface
      */
     public function store(array $attributes)
     {
-        $validated_user = Validator::make($attributes, $this->rules(true))->validate();
         if (array_key_exists('photo', $attributes) && $attributes['photo'] instanceof UploadedFile)
-            $validated_user['photo'] = $this->upload($attributes['photo']);
+            $attributes['photo'] = $this->upload($attributes['photo']);
         else
-            $validated_user['photo'] = null;
-            
-        $validated_user['password'] = bcrypt($validated_user['password']);
-        if ($validated_user['type'] === null)
-            unset($validated_user['type']);
+            $attributes['photo'] = null;
+        $attributes['password'] = bcrypt($attributes['password']);
+        if ($attributes['type'] === null)
+            unset($attributes['type']);
 
-        return User::create($validated_user);
+        return User::create($attributes);
     }
 
     /**
@@ -124,14 +116,10 @@ class UserService implements UserServiceInterface
      */
     public function update(int $id, array $attributes): bool
     {
-        $new_attributes = Validator::make($attributes, $this->rules(false, $id))->validate();
         if (array_key_exists('photo', $attributes) && $attributes['photo'] instanceof UploadedFile)
             $new_attributes['photo'] = $this->upload($attributes['photo']);
         else
             $new_attributes['photo'] = null;
-
-        if ($new_attributes['type'] === null)
-            unset($new_attributes['type']);
 
         return $this->find($id)->update($new_attributes);
     }
