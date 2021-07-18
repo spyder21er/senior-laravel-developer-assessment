@@ -91,7 +91,11 @@ class UserService implements UserServiceInterface
     public function store(array $attributes)
     {
         $validated_user = Validator::make($attributes, $this->rules(true))->validate();
-        $validated_user['photo'] = ($attributes['photo'] instanceof UploadedFile) ? $this->upload($attributes['photo']) : null;
+        if (array_key_exists('photo', $attributes) && $attributes['photo'] instanceof UploadedFile)
+            $validated_user['photo'] = $this->upload($attributes['photo']);
+        else
+            $validated_user['photo'] = null;
+            
         $validated_user['password'] = bcrypt($validated_user['password']);
         if ($validated_user['type'] === null)
             unset($validated_user['type']);
@@ -121,7 +125,11 @@ class UserService implements UserServiceInterface
     public function update(int $id, array $attributes): bool
     {
         $new_attributes = Validator::make($attributes, $this->rules(false, $id))->validate();
-        $new_attributes['photo'] = ($attributes['photo'] instanceof UploadedFile) ? $this->upload($attributes['photo']) : null;
+        if (array_key_exists('photo', $attributes) && $attributes['photo'] instanceof UploadedFile)
+            $new_attributes['photo'] = $this->upload($attributes['photo']);
+        else
+            $new_attributes['photo'] = null;
+
         if ($new_attributes['type'] === null)
             unset($new_attributes['type']);
 
