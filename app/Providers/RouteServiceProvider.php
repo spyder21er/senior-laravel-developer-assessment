@@ -47,6 +47,14 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
         });
+
+        Route::macro('softDeletes', function ($prefix, $controller) {
+            Route::prefix($prefix)->group(function () use ($prefix, $controller) {
+                Route::get('/trashed', $controller . '@trashed')->name($prefix . '.trashed');
+                Route::patch('{user}/restore', $controller . '@restore')->name($prefix . '.restore');
+                Route::delete('{user}/delete', $controller . '@delete')->name($prefix . '.delete');
+            });
+        });
     }
 
     /**
