@@ -124,4 +124,15 @@ class User extends Authenticatable
         . Str::title($this->lastname)
         . ($this->suffixname ? " " . Str::title($this->suffixname) . "." : "");
     }
+
+    /**
+     * Get the user's middle Initial
+     *
+     * @return string
+     */
+    public function getMiddleinitialAttribute()
+    {
+        // e.g. "delos Santos" -> "D."
+        return ($this->middlename ? Str::upper($this->middlename[0]) . "." : "");
+    }
 }
