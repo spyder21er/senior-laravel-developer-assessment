@@ -3,15 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\UserServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function __construct()
+    /**
+     * The user service pattern for this controller.
+     *
+     * @var App\Services\UserServiceInterface
+     */
+    protected $user_service;
+
+    /**
+     * Create a new user controller instance.
+     *
+     * @return void
+     */
+    public function __construct(UserServiceInterface $user_service)
     {
         $this->middleware('auth');
+        $this->user_service = $user_service;
     }
 
     /**
