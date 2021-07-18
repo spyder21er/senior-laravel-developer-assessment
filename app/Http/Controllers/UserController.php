@@ -145,4 +145,18 @@ class UserController extends Controller
 
         return view('users.trashed', compact('users'));
     }
+
+    /**
+     * Restore the specified soft deleted resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($id)
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+
+        return back()->with(['success' => 'User restored successfully!']);
+    }
 }

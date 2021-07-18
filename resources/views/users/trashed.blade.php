@@ -27,7 +27,11 @@
                             <td>{{ $user->email }}</td>
                             <td><img src="{{ $user->avatar }}" height="100" width="100" alt=""></td>
                             <td>
-                                <button class="btn btn-sm btn-success">Restore</button>
+                                <button onclick="event.preventDefault();
+                                            var restoreForm = document.getElementById('restore-form')
+                                            restoreForm.action = '{{ route('users.restore', $user->id) }}';
+                                            restoreForm.submit();" 
+                                    class="btn btn-sm btn-success">Restore</button>
                                 <button class="btn btn-sm btn-danger text-light">Delete</button>
                             </td>
                         </tr>
@@ -36,4 +40,8 @@
             </table>
         </div>
     </div>
+    <form id="restore-form" action="#" method="POST">
+        @csrf
+        @method('PATCH')
+    </form>
 @endsection
