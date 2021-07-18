@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Services\UserServiceInterface;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -53,12 +51,12 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\UserRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $this->user_service->store($request->all());
+        $this->user_service->store($request->validated());
 
         return back()->with('success', 'User created successfully');
     }
@@ -88,13 +86,13 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\UserRequest  $request
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        $this->user_service->update($user->id, $request->all());
+        $this->user_service->update($user->id, $request->validated());
 
         return back()->with('success', 'User updated successfully');
     }
