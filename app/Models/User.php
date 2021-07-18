@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -107,5 +108,20 @@ class User extends Authenticatable
     public function getAvatarAttribute()
     {
         return $this->photo == null ? $this->default_avatar : asset($this->photo);
+    }
+
+    /**
+     * Get the user's full name
+     *
+     * @return string
+     */
+    public function getFullnameAttribute()
+    {
+        // e.g. Juan C. Dela Cruz
+        return ($this->prefixname ? Str::title($this->prefixname) . ". " : "")
+        . Str::title($this->firstname) . " " 
+        . ($this->middlename ? Str::upper($this->middlename[0]) . ". " : "") 
+        . Str::title($this->lastname)
+        . ($this->suffixname ? " " . Str::title($this->suffixname) . "." : "");
     }
 }
