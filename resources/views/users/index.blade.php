@@ -27,7 +27,7 @@
                             <td>{{ $user->email }}</td>
                             <td><img src="" height="100" width="100" alt=""></td>
                             <td>
-                                <a class="btn btn-sm btn-primary" href="#">View</a>
+                                <a class="btn btn-sm btn-primary" href="{{ route('users.show', $user->id) }}">View</a>
                                 <a class="btn btn-sm btn-success" href="#">Edit</a>
                                 <a class="btn btn-sm btn-danger text-light" href="#">Delete</a>
                             </td>
