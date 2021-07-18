@@ -40,7 +40,7 @@ class UserFactory extends Factory
             'username' => $this->faker->unique()->userName(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => bcrypt('password'),
-            'photo' => $photo->storeAs('images', Str::random() . "." . $photo->extension(), 'public'),
+            'photo' => null,
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
