@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Events\UserSaved;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,6 +12,15 @@ use Illuminate\Support\Str;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'saved' => UserSaved::class,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -134,5 +143,15 @@ class User extends Authenticatable
     {
         // e.g. "delos Santos" -> "D."
         return ($this->middlename ? Str::upper($this->middlename[0]) . "." : "");
+    }
+
+    /**
+     * Details of this user
+     * 
+     * @return 
+     */
+    public function details()
+    {
+        return $this->hasMany(Detail::class);
     }
 }
