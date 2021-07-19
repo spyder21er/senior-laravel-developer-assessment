@@ -54,6 +54,6 @@ class SaveUserBackgroundInformationTest extends TestCase
         $previous_detail_count = Detail::all()->count();
         User::factory()->create();
 
-        $this->assertTrue(Detail::all()->count() == $previous_detail_count + 4);
+        $this->assertTrue(Detail::all()->count() > $previous_detail_count);
     }
 }
