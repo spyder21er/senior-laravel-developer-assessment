@@ -119,11 +119,11 @@ class UserService implements UserServiceInterface
     public function update(int $id, array $attributes): bool
     {
         if (array_key_exists('photo', $attributes) && $attributes['photo'] instanceof UploadedFile)
-            $new_attributes['photo'] = $this->upload($attributes['photo']);
+            $attributes['photo'] = $this->upload($attributes['photo']);
         else
-            $new_attributes['photo'] = null;
+            $attributes['photo'] = null;
 
-        return $this->find($id)->update($new_attributes);
+        return $this->find($id)->update($attributes);
     }
 
     /**
