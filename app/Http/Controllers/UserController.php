@@ -61,8 +61,7 @@ class UserController extends Controller
             $validated_user['photo'] = $request->photo->storeAs('images', Str::random() . "." . $request->photo->extension(), 'public');
         }
         $validated_user['password'] = bcrypt($validated_user['password']);
-        if ($validated_user['type'] === null) 
-            unset($validated_user['type']);
+
         User::create($validated_user);
 
         return back()->with('success', 'User created successfully');
@@ -114,8 +113,7 @@ class UserController extends Controller
         if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
             $new_attributes['photo'] = $request->photo->storeAs('images', Str::random() . "." . $request->photo->extension(), 'public');
         }
-        if ($new_attributes['type'] === null)
-            unset($new_attributes['type']);
+        
         $user->update($new_attributes);
 
         return back()->with('success', 'User updated successfully');
