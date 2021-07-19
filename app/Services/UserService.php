@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Events\UserSaved;
+use App\Models\Detail;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -187,5 +189,36 @@ class UserService implements UserServiceInterface
     public function upload(UploadedFile $file)
     {
         return $file->storeAs('images', Str::random() . "." . $file->extension(), 'public');
+    }
+
+    /**
+     * Handle user saved event
+     */
+    public function handle(UserSaved $event)
+    {
+        $gender = collect(['Mr' => 'Male', 'Ms' => 'Female', 'Mrs' => 'Female']);
+        $user = $event->user;
+        $user->details()->createMany([
+            [
+                'key'    => 'Full name',
+                'value'  => $user->fullname,
+                'type'   => 'bio',
+            ],
+            [
+                'key'    => 'Middle Initial',
+                'value'  => $user->middleinitial,
+                'type'   => 'bio',
+            ],
+            [
+                'key'    => 'Avatar',
+                'value'  => $user->avatar,
+                'type'   => 'bio',
+            ],
+            [
+                'key'    => 'Gender',
+                'value'  => $gender->get($user->prefixname),
+                'type'   => 'bio',
+            ]
+        ]);
     }
 }
